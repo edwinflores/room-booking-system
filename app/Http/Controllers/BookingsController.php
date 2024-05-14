@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Room;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 
 class BookingsController extends Controller
 {
-    public function list()
+    public function listByUser()
     {
-        $rooms = Room::all();
 
-        return response()->json($rooms);
+    }
+
+    public function listByRoom(int $roomId)
+    {
+
     }
 }
