@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\RoomType;
-use App\Models\Booking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

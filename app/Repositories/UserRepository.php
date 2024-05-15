@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Repositories;
 
 use App\Models\User;
-use Auth0\Laravel\{UserRepositoryAbstract, UserRepositoryContract};
+use Auth0\Laravel\UserRepositoryAbstract;
+use Auth0\Laravel\UserRepositoryContract;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -28,7 +29,7 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
 
         $identifier = $user['sub'] ?? $user['auth0'] ?? null;
 
-        if (null === $identifier) {
+        if ($identifier === null) {
             return null;
         }
 
@@ -61,7 +62,7 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
         ];
 
         // Check if a cache of the user exists in memory to avoid unnecessary database queries.
-        $cached = $this->withoutRecording(fn () => Cache::get('auth0_user_' . $identifier));
+        $cached = $this->withoutRecording(fn () => Cache::get('auth0_user_'.$identifier));
 
         if ($cached) {
             // Immediately return a cached user if one exists.
@@ -71,17 +72,17 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
         $user = null;
 
         // Check if the user exists in the database by Auth0 identifier.
-        if (null !== $identifier) {
+        if ($identifier !== null) {
             $user = User::where('auth0', $identifier)->first();
         }
 
         // Optional: if the user does not exist in the database by Auth0 identifier, you could fallback to matching by email.
-        if (null === $user && isset($user['email'])) {
+        if ($user === null && isset($user['email'])) {
             $user = User::where('email', $user['email'])->first();
         }
 
         // If a user was found, check if any updates to the local record are required.
-        if (null !== $user) {
+        if ($user !== null) {
             $updates = [];
 
             if ($user->auth0 !== $profile['auth0']) {
@@ -102,17 +103,17 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
                 $updates['email_verified'] = $profile['email_verified'];
             }
 
-            if ([] !== $updates) {
+            if ($updates !== []) {
                 $user->update($updates);
                 $user->save();
             }
 
-            if ([] === $updates && null !== $cached) {
+            if ($updates === [] && $cached !== null) {
                 return $user;
             }
         }
 
-        if (null === $user) {
+        if ($user === null) {
             // Local password column is not necessary or used by Auth0 authentication, but may be expected by some applications/packages.
             $profile['password'] = Hash::make(Str::random(32));
 
@@ -121,16 +122,17 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
         }
 
         // Cache the user for 30 seconds.
-        $this->withoutRecording(fn () => Cache::put('auth0_user_' . $identifier, $user, 30));
+        $this->withoutRecording(fn () => Cache::put('auth0_user_'.$identifier, $user, 30));
 
         return $user;
     }
 
     /**
      * Workaround for Laravel Telescope potentially causing an infinite loop.
+     *
      * @link https://github.com/auth0/laravel-auth0/tree/main/docs/Telescope.md
      *
-     * @param callable $callback
+     * @param  callable  $callback
      */
     private function withoutRecording($callback): mixed
     {

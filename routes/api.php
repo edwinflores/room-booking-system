@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\RoomsController;
-use Auth0\Laravel\Facade\Auth0;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 

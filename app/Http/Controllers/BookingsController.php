@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\RoomsController;
 use App\Models\Booking;
 use App\Models\Room;
-use Auth0\Laravel\Facade\Auth0;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,8 +18,6 @@ class BookingsController extends Controller
 
     /**
      * What bookings has the authenticated user made?
-     *
-     * @return JsonResponse
      */
     public function listByUser(): JsonResponse
     {
@@ -32,17 +27,16 @@ class BookingsController extends Controller
         $bookings = $user->bookings()->with('room')->get();
 
         return response()->json([
-            'status' => 'success', 
-            'bookings' => $bookings
+            'status' => 'success',
+            'bookings' => $bookings,
         ]);
     }
 
     /**
      * Reserve a room for the authenticated user
      *
-     * @param Illuminate\Http\Request $request
-     * @param App\Http\Controllers\RoomsController $roomsController
-     * @return JsonResponse
+     * @param  Illuminate\Http\Request  $request
+     * @param  App\Http\Controllers\RoomsController  $roomsController
      */
     public function add(Request $request, RoomsController $roomsController): JsonResponse
     {
@@ -51,15 +45,15 @@ class BookingsController extends Controller
         $rules = [
             'room_id' => 'required|integer|min:1|exists:App\Models\Room,id',
             'reserve_from' => 'required|date_format:Y-m-d H:i|after:now',
-            'reserve_to' => 'required|date_format:Y-m-d H:i|after:reserve_from'
+            'reserve_to' => 'required|date_format:Y-m-d H:i|after:reserve_from',
         ];
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
-              'status' => 'failed',
-              'message' => $validator->errors(),
+                'status' => 'failed',
+                'message' => $validator->errors(),
             ], 400);
         }
 
@@ -68,19 +62,19 @@ class BookingsController extends Controller
         // Find the target Room
         $room = Room::find($input['room_id']);
 
-        if(empty($room)) {
+        if (empty($room)) {
             return response()->json([
-              'status' => 'failed',
-              'message' =>'Room not found.',
+                'status' => 'failed',
+                'message' => 'Room not found.',
             ], 404);
         }
 
         // Check availability. Should also cover if they try to double book the same timeslots.
         // If there was a cancel functionality, then the User should make use of that first before double booking.
-        if (!$roomsController->isRoomAvailable($room, $input['reserve_from'], $input['reserve_to'])) {
+        if (! $roomsController->isRoomAvailable($room, $input['reserve_from'], $input['reserve_to'])) {
             return response()->json([
-              'status' => 'failed',
-              'message' =>'Room is not available for the given timeslots.',
+                'status' => 'failed',
+                'message' => 'Room is not available for the given timeslots.',
             ], 200);
         }
 
@@ -97,9 +91,9 @@ class BookingsController extends Controller
         ]);
 
         return response()->json([
-          'status' => 'success',
-          'message' =>'Room has been reserved.',
-          'booking' => $booking,
+            'status' => 'success',
+            'message' => 'Room has been reserved.',
+            'booking' => $booking,
         ], 200);
     }
 }

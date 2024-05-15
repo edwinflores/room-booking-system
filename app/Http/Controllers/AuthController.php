@@ -24,7 +24,7 @@ class AuthController extends Controller
 
         if (empty($authUser)) {
             return response()->json([
-              'status' => 'failed',
+                'status' => 'failed',
             ], 401);
         }
 
@@ -33,7 +33,7 @@ class AuthController extends Controller
         // User Auth0 record isn't updated or isn't in the system
         if (empty($user)) {
             return response()->json([
-              'status' => 'failed',
+                'status' => 'failed',
             ], 404);
         }
 
