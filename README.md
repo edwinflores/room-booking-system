@@ -17,11 +17,11 @@ Generally still follows the Laravel Installation Guide from the "Initial Configu
 4. Change the values of the following variables to match your environment:
 ```
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_USERNAME=root
-DB_PASSWORD=root
-APP_PORT=8000
+DB_HOST=
+DB_PORT=
+DB_USERNAME=
+DB_PASSWORD=
+APP_PORT=
 CLIENT_ORIGIN_URL=CLIENT_ORIGIN_URL
 AUTH0_AUDIENCE=AUTH0_AUDIENCE
 AUTH0_DOMAIN=AUTH0_DOMAIN
