@@ -14,6 +14,20 @@ class Booking extends Model
     use HasFactory;
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'user_id',
+        'room_id',
+        'reserved_from',
+        'reserved_to',
+    ];
+
+    protected $hidden = ['deleted_at'];
+
+    /**
      * Get the user that made this booking
      */
     public function user(): BelongsTo

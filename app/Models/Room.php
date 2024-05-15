@@ -17,6 +17,8 @@ class Room extends Model
         'type' => RoomType::class,
     ];
 
+    protected $hidden = ['deleted_at', 'updated_at'];
+
     /**
      * Get the bookings made for this room.
      */
